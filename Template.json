@@ -1,0 +1,94 @@
+{
+    "project_name":"Architecture Automation",
+    "diagram_name":"Reference Architecture 0.04",
+    "components":
+    [
+        {
+            "name":"Client Channels",
+            "type":"cluster",
+            "components":
+            [
+                {"name":"Web","type":"pc-client","components":[]},
+                {"name":"Mobile","type":"mobile-client","components":[]}
+            ]
+        },
+        {
+            "name":"DMZ",
+            "type":"cluster",
+            "components":
+            [
+                {"name":"Firewall","type":"dmz-fw","components":[]},
+                {"name":"Load Balancer","type":"dmz-lb","components":[]}
+            ]   
+        },
+        {
+            "name":"Internal Zone",
+            "type":"cluster",
+            "components":
+            [
+                {
+                    "name":"Web Tier",
+                    "type":"cluster",
+                    "components":[
+                        {"name":"API Management","type":"api-manager","components":[]},
+                        {"name":"Identity and User Access Management","type":"iam-manager","components":[]},
+                        {"name":"Static content","type":"content","components":[]}
+                    ]
+                },
+                {
+                    "name":"Business",
+                    "type":"cluster",
+                    "components":[
+                        {
+                            "name":"K8S","type":"cluster","components":
+                            [
+                                {"name":"App-module1","type":"bs-container","components":[]},
+                                {"name":"App-module2","type":"bs-container","components":[]},
+                                {"name":"App-module3","type":"bs-container","components":[]}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name":"Data",
+                    "type":"cluster",
+                    "components":[
+                        {"name":"app module 1 db","type":"ms-sql-db","components":[]},
+                        {"name":"app module 2 db","type":"ms-sql-db","components":[]},
+                        {"name":"app module 3 db","type":"pg-sql-db","components":[]}
+                    ]
+                },
+                {
+                    "name":"Integration",
+                    "type":"cluster",
+                    "components":[
+                        {"name":"Cache","type":"redis-db","components":[]},
+                        {"name":"Message Brocker","type":"queue","components":[]},
+                        {"name":"Payment","type":"int-service","components":[]}
+                    ]
+                }
+            ]
+        }
+    ],
+    "connections":
+    [
+        {"from":"Web","to":"Firewall"},
+        {"from":"Mobile","to":"Firewall"},
+        {"from":"Firewall","to":"Load Balancer"},
+        {"from":"Load Balancer","to":"API Management"},
+        {"from":"Load Balancer","to":"Identity and User Access Management"},
+        {"from":"Load Balancer","to":"Static content"},
+        {"from":"API Management","to":"Identity and User Access Management"},
+        {"from":"API Management","to":"App-module1"},
+        {"from":"API Management","to":"App-module2"},
+        {"from":"API Management","to":"App-module3"},
+        {"from":"App-module1","to":"app module 1 db"},
+        {"from":"App-module2","to":"app module 2 db"},
+        {"from":"App-module3","to":"app module 3 db"},
+        {"from":"App-module1","to":"Cache"},
+        {"from":"App-module1","to":"Message Brocker"},
+        {"from":"App-module2","to":"Message Brocker"},
+        {"from":"App-module2","to":"Payment"},
+        {"from":"App-module3","to":"Message Brocker"}
+    ]
+}
